@@ -2,27 +2,16 @@
 
 import { cryptoRandomString } from "https://deno.land/x/crypto_random_string@1.0.0/mod.ts"
 
-interface IList {
-    add(item: string) : string;
-    update(key: string, item: any) : void;
-    remove(key: string) : boolean;
-    find(key: string) : IListItem;
-}
-
 export interface IListItem {
     key: string;
     data: any;
     next: IListItem;
 }
 
-export class LinkedList implements IList {
-    private _first : IListItem | null;
-    private _last : IListItem | null;
+export class LinkedList {
+    private _first : IListItem | null = null;
+    private _last : IListItem | null = null;
     private _count : number = 0;
-
-    constructor() {
-        this._first = this._last = null;
-    }
 
     public get first() : IListItem | null {
         return this._first;
@@ -37,7 +26,7 @@ export class LinkedList implements IList {
     }
 
     public add(data: any): string {
-        let newItem : IListItem | null =  {
+        let newItem : IListItem =  {
             key: cryptoRandomString({ length: 10 }),
             data: data,
         } as IListItem;
@@ -56,15 +45,63 @@ export class LinkedList implements IList {
         return newItem.key;
     }
 
-    public update(key: string, data: any): void {
-        throw new Error("Method not implemented.");
+    public update(key: string, data: any): any {
+        let item : IListItem | null = this.find(key);
+
+        if(item!=null) {
+            item.data = data;
+            return data;
+        }
+
+        return null;
     }
 
     public remove(key: string): boolean {
         throw new Error("Method not implemented.");
     }
 
-    public find(key: string) : IListItem {
-        throw new Error("Method not implemented.");
+    public find(key: string) : IListItem | null {
+        let current = this._first;
+
+        while(current!=null) {
+            if(key == current.key) {
+                return current;
+            } 
+            current = current.next;
+        }
+
+        return current;
     }
+
+    public getKeys() : string[] {
+        let keys : string[] = [];
+
+        let current : IListItem | null = this.first;
+
+        if(current!=null) {
+            while(current!=null) {
+                keys.push(current.key);
+                current = current.next;
+            }
+        }
+
+        return keys;
+    }
+
+    /*public findByIndex(index: number) : IListItem | null {
+        let count = 0;
+
+        let current = this._first;
+
+        if(this._first) {
+            for(count=0; count <= index; count++) {
+                if(count == index) {
+                    return current;
+                }
+                current = current.next;
+            }
+        }
+
+        return this._first;
+    }*/
 }
